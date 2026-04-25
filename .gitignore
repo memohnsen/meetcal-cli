@@ -1,0 +1,6 @@
+.bunli/
+.env
+.env.local
+convex/_generated/
+node_modules/
+bun.lock
