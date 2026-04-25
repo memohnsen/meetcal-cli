@@ -1,10 +1,7 @@
-type Gender = "Men" | "Women";
-type Event = string;
-type AgeGroup = string;
-
-export interface Filters {
-  [key: string]: string;
-  event: Event;
+export interface QualifyingTotal {
+  qualifyingTotal: string;
+  eventName: string;
   gender: string;
-  ageGroup: AgeGroup;
+  ageCategory: string;
+  weightClass: string
 }

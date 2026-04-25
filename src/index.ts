@@ -3,6 +3,7 @@ import { createCLI } from "@bunli/core";
 
 import search from "./commands/search.js";
 import standards from "./commands/standards.js";
+import qualifyingTotals from "./commands/qualifyingTotals.js";
 
 const cli = await createCLI({
   name: "meetcal",
@@ -12,5 +13,6 @@ const cli = await createCLI({
 
 cli.command(search)
 cli.command(standards)
+cli.command(qualifyingTotals)
 
 await cli.run();

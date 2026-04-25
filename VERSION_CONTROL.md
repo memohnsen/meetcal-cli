@@ -4,8 +4,7 @@
     -[x] search: enter athlete name and get PRs and all results
         -[x] add make rates overall and by attempt
     -[x] standards: age, gender
-    -[ ] adap-records: age and gender
-    -[ ] qualifying-totals: enter meet and class, gender
+    -[x] qualifying-totals: enter meet and class, gender
     -[ ] american-records: class and age, gender
     -[ ] wso-records: wso and age, gender
     -[ ] intl-rankings: meet and age, gender
@@ -22,4 +21,5 @@
     -[ ] club-compare
     -[ ] wso-compare 
     -[ ] nat-rankings: enter weight and age group, gender and get rankings
+    -[ ] adap-records: 
 

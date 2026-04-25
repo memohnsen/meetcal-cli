@@ -1,4 +1,3 @@
-
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
@@ -60,8 +59,9 @@ export default defineCommand({
       )
     })
 
-    table.sort((a, b) => a[1] - b[1])
+    table.sort((a: Standards[], b: Standards[]) => a[1] - b[1])
 
+    console.log(`STANDARDS FOR ${age} ${gender}`)
     console.log(table.toString());
   },
 });
