@@ -5,3 +5,4 @@ dist/
 convex/_generated/
 node_modules/
 bun.lock
+.DS_Store

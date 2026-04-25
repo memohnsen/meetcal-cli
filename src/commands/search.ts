@@ -3,7 +3,10 @@ import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
 import type LiftingResults from "../types/liftingResults";
-import { ConvexProviderWithAuth0 } from "convex/react-auth0";
+
+type AttemptKey = "snatch1" | "snatch2" | "snatch3" | "cj1" | "cj2" | "cj3";
+const snatchAttempts: AttemptKey[] = ["snatch1", "snatch2", "snatch3"];
+const cjAttempts: AttemptKey[] = ["cj1", "cj2", "cj3"];
 
 /* 
  * Search for an athlete with first and last name
@@ -40,6 +43,7 @@ export default defineCommand({
       names: [name],
     });
 
+    // Meet Results
     const Table = require('cli-table3')
 
     const table = new Table({
@@ -53,22 +57,20 @@ export default defineCommand({
       )
     })
 
+    // PRs
     const personalRecords = () => {
-      let snatchPR = 0
-      let cjPR = 0
-      let totalPR = 0
+      const maxForAttempts = (attempts: AttemptKey[]) => {
+        return Math.max(
+          0,
+          ...results.flatMap((result: LiftingResults) => attempts.map((attempt) => result[attempt]))
+        )
+      }
 
-      results.forEach((result: LiftingResults) => {
-        if (result.snatch1 > snatchPR) { snatchPR = result.snatch1 }
-        if (result.snatch2 > snatchPR) { snatchPR = result.snatch2 }
-        if (result.snatch3 > snatchPR) { snatchPR = result.snatch3 }
-        if (result.cj1 > cjPR) { cjPR = result.cj1 }
-        if (result.cj2 > cjPR) { cjPR = result.cj2 }
-        if (result.cj3 > cjPR) { cjPR = result.cj3 }
-        if (result.total > totalPR) { totalPR = result.total }
-      })
-
-      return { snatchPR, cjPR, totalPR }
+      return {
+        snatchPR: maxForAttempts(snatchAttempts),
+        cjPR: maxForAttempts(cjAttempts),
+        totalPR: Math.max(0, ...results.map((result: LiftingResults) => result.total)),
+      }
     }
 
     const prTable = new Table({
@@ -80,51 +82,64 @@ export default defineCommand({
       [personalRecords().snatchPR, personalRecords().cjPR, personalRecords().totalPR]
     )
 
-
     const makeRateTable = new Table({
       head: ["Snatch Make Rate", "CJ Make Rate", "Total Make Rate"],
       colWidths: [25, 25, 25]
     })
 
-    const calcMakeRate = () => {
-      let snatchCount = 0
-      let cjCount = 0
-      let snatchMake = 0
-      let cjMake = 0.0
+    // Make rates
+    const calcMakeRateForAttempts = (attempts: AttemptKey[]) => {
+      let count = 0
+      let madeCount = 0
 
-      // get count of all attempts 1,2,3 
-      // get count if > 0 
-      // average 
       results.forEach((result: LiftingResults) => {
-        if (result.snatch1) { snatchCount += 1 }
-        if (result.snatch2) { snatchCount += 1 }
-        if (result.snatch3) { snatchCount += 1 }
-        if (result.cj1) { cjCount += 1 }
-        if (result.cj2) { cjCount += 1 }
-        if (result.cj3) { cjCount += 1 }
+        attempts.forEach((attempt) => {
+          const attemptValue = result[attempt]
 
-        if (result.snatch1 > 0) { snatchMake += 1 }
-        if (result.snatch2 > 0) { snatchMake += 1 }
-        if (result.snatch3 > 0) { snatchMake += 1 }
-        if (result.cj1 > 0) { cjMake += 1 }
-        if (result.cj2 > 0) { cjMake += 1 }
-        if (result.cj3 > 0) { cjMake += 1 }
+          if (attemptValue) { count += 1 }
+          if (attemptValue > 0) { madeCount += 1 }
+        })
       });
 
-      const snatchRate = snatchMake / snatchCount * 100
-      const cjRate = cjMake / cjCount * 100
+      if (count === 0) {
+        return 0
+      }
+
+      return madeCount / count * 100
+    }
+
+    const calcMakeRate = () => {
+      const snatchRate = calcMakeRateForAttempts(snatchAttempts)
+      const cjRate = calcMakeRateForAttempts(cjAttempts)
       const totalRate = (snatchRate + cjRate) / 2
 
       return { snatchRate, cjRate, totalRate }
     }
 
+    const makeRate = calcMakeRate()
+
     makeRateTable.push(
-      [`${calcMakeRate().snatchRate.toFixed(2)}%`, `${calcMakeRate().cjRate.toFixed(2)}%`, `${calcMakeRate().totalRate.toFixed(2)}%`]
+      [`${makeRate.snatchRate.toFixed(2)}%`, `${makeRate.cjRate.toFixed(2)}%`, `${makeRate.totalRate.toFixed(2)}%`]
     )
 
+    const calcMakeRatePerAttempt = (attempt: AttemptKey) => {
+      return `${calcMakeRateForAttempts([attempt]).toFixed(2)}%`
+    }
+
+    const makeRatePerAttemptTable = new Table({
+      head: ["Sn1 Make Rate", "Sn2", "Sn3", "CJ1", "CJ2", "CJ3"],
+      colWidths: [15, 10, 10, 10, 10, 10]
+    })
+
+    makeRatePerAttemptTable.push(
+      [calcMakeRatePerAttempt("snatch1"), calcMakeRatePerAttempt("snatch2"), calcMakeRatePerAttempt("snatch3"), calcMakeRatePerAttempt("cj1"), calcMakeRatePerAttempt("cj2"), calcMakeRatePerAttempt("cj3")]
+    )
+
+    // Outputs
     console.log(`Liftings Results for ${name}`)
     console.log(prTable.toString())
     console.log(makeRateTable.toString())
+    console.log(makeRatePerAttemptTable.toString())
     console.log(table.toString());
   },
 });

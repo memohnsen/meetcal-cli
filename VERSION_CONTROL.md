@@ -2,7 +2,7 @@
 
   ### Commands
     -[x] search: enter athlete name and get PRs and all results
-        -[ ] add make rates overall and by attempt
+        -[x] add make rates overall and by attempt
     -[x] standards: age, gender
     -[ ] adap-records: age and gender
     -[ ] qualifying-totals: enter meet and class, gender
