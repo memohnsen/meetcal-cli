@@ -5,7 +5,7 @@
         -[x] add make rates overall and by attempt
     -[x] standards: age, gender
     -[x] qualifying-totals: enter meet and class, gender
-    -[ ] american-records: class and age, gender
+    -[x] american-records: age, gender
     -[ ] wso-records: wso and age, gender
     -[ ] intl-rankings: meet and age, gender
     -[ ] world-records: class, gender, and age

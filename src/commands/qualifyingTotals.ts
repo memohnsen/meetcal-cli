@@ -9,7 +9,7 @@ import { QualifyingTotal } from "../types/qualTotals";
  * 
  * examples:
  *   meetcal qualifyingTotals --age Senior --gender Men --event Nationals
- *   meetcal standards U17 Women AO Finals
+ *   meetcal qualifyingTotals U17 Women AO Finals
  */
 
 export default defineCommand({

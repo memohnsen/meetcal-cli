@@ -1,26 +1,12 @@
-export interface WeightClassRecord {
+export interface Record {
   weightClass: string;
   snatchRecord: number;
   cjRecord: number;
   totalRecord: number;
+  gender: Gender
+  ageCategory: string
+  recordType: Federation
 }
 
-export type AgeGroupRecords = {
-  Men: WeightClassRecord[];
-  Women: WeightClassRecord[];
-};
-
-export type RecordsData = {
-  [ageGroup: string]: AgeGroupRecords;
-};
-
-export type Federation = string;
-export type Gender = "Men" | "Women";
-export type AgeGroup = string; // Changed from specific union
-
-export interface Filters {
-  [key: string]: string;
-  federation: Federation;
-  gender: string;
-  ageGroup: AgeGroup;
-}
+type Gender = "Men" | "Women";
+type Federation = "IWF" | "USAMW" | "USAW" | "UMWF"
