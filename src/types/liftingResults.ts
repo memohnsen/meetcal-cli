@@ -1,4 +1,3 @@
-
 export default interface LiftingResults {
   id: number;
   convexId?: string;
@@ -13,7 +12,7 @@ export default interface LiftingResults {
   snatch3: number;
   snatch_best: number;
   cj1: number;
-  cj2: number
+  cj2: number;
   cj3: number;
   cj_best: number;
   total: number;

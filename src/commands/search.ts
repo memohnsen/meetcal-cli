@@ -2,14 +2,14 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
-import LiftingResults from "../../types/liftingResults"
+import type LiftingResults from "../types/liftingResults";
 
 /* 
  * Search for an athlete with first and last name
  * Returns athlete PRs and full meet history
  * examples:
- *   meetcal-cli search --name "Maddisen Mohnsen"
- *   meetcal-cli search Maddisen Mohnsen
+ *   meetcal search --name "Maddisen Mohnsen"
+ *   meetcal search Maddisen Mohnsen
  */
 
 export default defineCommand({
@@ -25,7 +25,7 @@ export default defineCommand({
     const name = flags.name ?? positional.join(" ");
 
     if (!name) {
-      throw new Error('Usage: meetcal-cli search --name "First Last"');
+      throw new Error('Usage: meetcal search --name "First Last"');
     }
 
     const convexUrl = process.env.CONVEX_URL;
