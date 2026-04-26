@@ -7,7 +7,7 @@
     -[x] qualifying-totals: enter meet and class, gender
     -[x] american-records: age, gender
     -[x] help
-    -[ ] wso-records: wso and age, gender
+    -[x] wso-records: wso and age, gender
     -[ ] intl-rankings: meet and age, gender
     -[ ] world-records: class, gender, and age
     -[ ] meet: enter meet name and get by name list and results
@@ -23,4 +23,4 @@
     -[ ] wso-compare 
     -[ ] nat-rankings: enter weight and age group, gender and get rankings
     -[ ] adap-records: 
-
+    -[ ] error handling for wrong flags or convex errors

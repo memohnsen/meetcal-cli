@@ -5,16 +5,16 @@ import { anyApi } from "convex/server";
 import { Record } from "../types/records";
 
 /* 
- * Search for American Records with age, federation, and gender
+ * Search for WSO Records with age, WSO, and gender
  * 
  * examples:
- *   meetcal americanRecords --age Senior --gender Men --federation USAW
- *   meetcal americanRecords U17 Women IWF
+ *   meetcal wsoRecords --age Senior --gender Men --wso Carolinas
+ *   meetcal wsoRecords U17 Women Carolinas
  */
 
 export default defineCommand({
-  name: "americanRecords" as const,
-  description: "Search for American Records for a given age, federation, and gender",
+  name: "wsoRecords" as const,
+  description: "Search for WSO Records for a given age, wso, and gender",
   options: {
     age: option(z.string().min(1).optional(), {
       description: "Age group to search for",
@@ -24,18 +24,18 @@ export default defineCommand({
       description: "Gender group to search for",
       short: "g"
     }),
-    federation: option(z.string().min(1).optional(), {
-      description: "IWF, USAW, USAMW, or UMWF",
-      short: "f"
+    wso: option(z.string().min(1).optional(), {
+      description: "WSO region to search for",
+      short: "w"
     })
   },
   handler: async ({ flags, positional }) => {
-    const [positionalAge, positionalGender, positionalFederation] = positional;
+    const [positionalAge, positionalGender, positionalWSO] = positional;
     const age = flags.age ?? positionalAge;
     const gender = flags.gender ?? positionalGender;
-    const federation = flags.federation ?? positionalFederation;
+    const wso = flags.wso ?? positionalWSO;
 
-    if (!age || !gender) {
+    if (!age || !gender || !wso) {
       throw new Error('Usage: meetcal americanRecords --age Senior --gender Men');
     }
 
@@ -46,10 +46,10 @@ export default defineCommand({
     }
 
     const convex = new ConvexHttpClient(convexUrl);
-    const results = await convex.query(anyApi.records.getByFederation, {
-      ageCategory: age.toLowerCase(),
-      gender: gender.toLowerCase(),
-      recordType: federation.toUpperCase()
+    const results = await convex.query(anyApi.wsoRecords.getByWso, {
+      ageCategory: age,
+      gender: gender,
+      wso: wso
     });
 
     const Table = require('cli-table3')
@@ -82,7 +82,7 @@ export default defineCommand({
       )
     })
 
-    console.log(`AMERICAN RECORDS FOR ${age} ${gender} ${federation}`)
+    console.log(`AMERICAN RECORDS FOR ${age} ${gender} ${wso}`)
     console.log(table.toString());
   },
 });
