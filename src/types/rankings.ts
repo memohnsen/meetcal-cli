@@ -1,7 +1,7 @@
 export interface Rankings {
-  meet: string;
-  ageCategory: string;
-  gender: string;
+  meet?: string;
+  ageCategory?: string;
+  gender?: string;
   percentA?: number
   name: string
   ranking: number

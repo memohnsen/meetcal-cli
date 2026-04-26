@@ -8,6 +8,7 @@ import help from "./commands/help.js";
 import wsoRecords from "./commands/wsoRecords.js";
 import intlRankings from "./commands/intlRankings.js";
 import records from "./commands/records.js";
+import natRankings from "./commands/natRankings.js";
 
 const cli = await createCLI({
   name: "meetcal",
@@ -22,5 +23,6 @@ cli.command(records)
 cli.command(help)
 cli.command(wsoRecords)
 cli.command(intlRankings)
+cli.command(natRankings)
 
 await cli.run();

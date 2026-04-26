@@ -14,7 +14,7 @@ import { Rankings } from "../types/rankings";
 
 export default defineCommand({
   name: "intlRankings" as const,
-  description: "Search for WSO Records for a given age, wso, and gender",
+  description: "Search for International Rankings for a given age, meet, and gender",
   options: {
     age: option(z.string().min(1).optional(), {
       description: "Age group to search for",

@@ -5,11 +5,13 @@
         -[x] add make rates overall and by attempt
     -[x] standards: age, gender
     -[x] qualifying-totals: enter meet and class, gender
-    -[x] american-records: age, gender
+    -[x] records: age, gender
     -[x] help
     -[x] wso-records: wso and age, gender
     -[x] intl-rankings: meet and age, gender
-    -[ ] world-records: class, gender, and age
+    -[x] nat-rankings: enter weight and age group, gender and get rankings
+        -[ ] dedup repeated names, get only max
+    -[ ] adap-records: 
     -[ ] meet: enter meet name and get by name list and results
         -- flag to get results from session or weight class
     -[ ] entries: get list of entries from club for specified meet
@@ -21,6 +23,4 @@
     -[ ] compare: enter athlete name and 2 years and compare results for 1 year vs other
     -[ ] club-compare
     -[ ] wso-compare 
-    -[ ] nat-rankings: enter weight and age group, gender and get rankings
-    -[ ] adap-records: 
     -[ ] error handling for wrong flags or convex errors
