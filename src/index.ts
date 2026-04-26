@@ -4,9 +4,10 @@ import { createCLI } from "@bunli/core";
 import search from "./commands/search.js";
 import standards from "./commands/standards.js";
 import qualifyingTotals from "./commands/qualifyingTotals.js";
-import americanRecords from "./commands/americanRecords.js";
 import help from "./commands/help.js";
 import wsoRecords from "./commands/wsoRecords.js";
+import intlRankings from "./commands/intlRankings.js";
+import records from "./commands/records.js";
 
 const cli = await createCLI({
   name: "meetcal",
@@ -17,8 +18,9 @@ const cli = await createCLI({
 cli.command(search)
 cli.command(standards)
 cli.command(qualifyingTotals)
-cli.command(americanRecords)
+cli.command(records)
 cli.command(help)
 cli.command(wsoRecords)
+cli.command(intlRankings)
 
 await cli.run();

@@ -5,16 +5,16 @@ import { anyApi } from "convex/server";
 import { Record } from "../types/records";
 
 /* 
- * Search for American Records with age, federation, and gender
+ * Search for Records with age, federation, and gender
  * 
  * examples:
- *   meetcal americanRecords --age Senior --gender Men --federation USAW
- *   meetcal americanRecords U17 Women IWF
+ *   meetcal records --age Senior --gender Men --federation USAW
+ *   meetcal records U17 Women IWF
  */
 
 export default defineCommand({
-  name: "americanRecords" as const,
-  description: "Search for American Records for a given age, federation, and gender",
+  name: "records" as const,
+  description: "Search for Records for a given age, federation, and gender",
   options: {
     age: option(z.string().min(1).optional(), {
       description: "Age group to search for",

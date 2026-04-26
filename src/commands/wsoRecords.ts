@@ -36,7 +36,7 @@ export default defineCommand({
     const wso = flags.wso ?? positionalWSO;
 
     if (!age || !gender || !wso) {
-      throw new Error('Usage: meetcal americanRecords --age Senior --gender Men');
+      throw new Error('Usage: meetcal wsoRecords --age Senior --gender Men --wso Carolina');
     }
 
     const convexUrl = process.env.CONVEX_URL;

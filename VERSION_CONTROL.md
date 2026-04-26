@@ -8,7 +8,7 @@
     -[x] american-records: age, gender
     -[x] help
     -[x] wso-records: wso and age, gender
-    -[ ] intl-rankings: meet and age, gender
+    -[x] intl-rankings: meet and age, gender
     -[ ] world-records: class, gender, and age
     -[ ] meet: enter meet name and get by name list and results
         -- flag to get results from session or weight class
