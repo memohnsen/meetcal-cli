@@ -5,6 +5,7 @@ import search from "./commands/search.js";
 import standards from "./commands/standards.js";
 import qualifyingTotals from "./commands/qualifyingTotals.js";
 import americanRecords from "./commands/americanRecords.js";
+import help from "./commands/help.js";
 
 const cli = await createCLI({
   name: "meetcal",
@@ -16,5 +17,6 @@ cli.command(search)
 cli.command(standards)
 cli.command(qualifyingTotals)
 cli.command(americanRecords)
+cli.command(help)
 
 await cli.run();

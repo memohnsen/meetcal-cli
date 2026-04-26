@@ -6,6 +6,7 @@
     -[x] standards: age, gender
     -[x] qualifying-totals: enter meet and class, gender
     -[x] american-records: age, gender
+    -[x] help
     -[ ] wso-records: wso and age, gender
     -[ ] intl-rankings: meet and age, gender
     -[ ] world-records: class, gender, and age
