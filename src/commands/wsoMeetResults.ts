@@ -1,0 +1,297 @@
+import { defineCommand, option } from "@bunli/core";
+import { z } from "zod";
+import { ConvexHttpClient } from "convex/browser";
+import { anyApi } from "convex/server";
+import { AthleteRow, LiftRow, RESULT_MEET_ALIASES } from "../types/wso";
+
+/* 
+ * Get WSO results for meet
+ * 
+ * examples:
+ *   meetcal wso --meet "2026 Virus Weightlifting Finals, Powered by Rogue Fitness" --wso Carolina
+ *   meetcal wso "2026 Virus Weightlifting Finals, Powered by Rogue Fitness" Carolina
+ */
+
+export default defineCommand({
+  name: "wso" as const,
+  description: "Get full meet results for a given WSO",
+  options: {
+    meet: option(z.string().min(1).optional(), {
+      description: "Meet to search for",
+      short: "m",
+    }),
+    wso: option(z.string().min(1).optional(), {
+      description: "WSO to search for",
+      short: "w"
+    }),
+  },
+  handler: async ({ flags, positional }) => {
+    const [positionalMeet, positionalWSO] = positional;
+    const meet = flags.meet ?? positionalMeet;
+    const wso = flags.wso ?? positionalWSO;
+
+    if (!meet || !wso) {
+      throw new Error('Usage: meetcal wso "2026 Masters National Championships & National University Championships" Carolina');
+    }
+
+    const convexUrl = process.env.CONVEX_URL;
+
+    if (!convexUrl) {
+      throw new Error("Missing CONVEX_URL. Add it to .env.local or export it before running the CLI.");
+    }
+
+    const convex = new ConvexHttpClient(convexUrl);
+
+    function normalize(value: string | null | undefined): string {
+      return value?.trim().toLowerCase() ?? "";
+    }
+
+    function getResultMeetNames(meet: string): string[] {
+      return [meet, ...(RESULT_MEET_ALIASES[meet] ?? [])];
+    }
+
+    function formatPercent(value: number): string {
+      return `${value.toFixed(1)}%`;
+    }
+
+    function maxPositive(values: Array<number | null | undefined>): number | null {
+      const successful = values.filter(
+        (value): value is number => typeof value === "number" && value > 0,
+      );
+
+      if (successful.length === 0) {
+        return null;
+      }
+
+      return Math.max(...successful);
+    }
+
+    function maxNullable(values: Array<number | null | undefined>): number | null {
+      const numbers = values.filter(
+        (value): value is number => typeof value === "number",
+      );
+
+      if (numbers.length === 0) {
+        return null;
+      }
+
+      return Math.max(...numbers);
+    }
+
+    function deriveSnatchBest(row: LiftRow): number | null {
+      return row.snatchBest ?? maxPositive([row.snatch1, row.snatch2, row.snatch3]);
+    }
+
+    function deriveCjBest(row: LiftRow): number | null {
+      return row.cjBest ?? maxPositive([row.cj1, row.cj2, row.cj3]);
+    }
+
+    function deriveTotal(row: LiftRow): number | null {
+      if (typeof row.total === "number") {
+        return row.total;
+      }
+
+      const snatchBest = deriveSnatchBest(row);
+      const cjBest = deriveCjBest(row);
+
+      if (snatchBest == null || cjBest == null) {
+        return null;
+      }
+
+      return snatchBest + cjBest;
+    }
+
+    function isRecordedAttempt(value: number | null | undefined): value is number {
+      return typeof value === "number" && value !== 0;
+    }
+
+    function isPr(current: number | null, priorMax: number | null): boolean {
+      if (current == null) {
+        return false;
+      }
+
+      if (priorMax == null) {
+        return true;
+      }
+
+      return current > priorMax;
+    }
+
+    function buildRowsByName(rows: LiftRow[]): Map<string, LiftRow[]> {
+      const rowsByName = new Map<string, LiftRow[]>();
+
+      for (const row of rows) {
+        const existing = rowsByName.get(row.name) ?? [];
+        existing.push(row);
+        rowsByName.set(row.name, existing);
+      }
+
+      return rowsByName;
+    }
+    const athletes: AthleteRow[] = await convex.query(anyApi.athletes.getByMeet, {
+      meet,
+    });
+
+    const normalizedWso = normalize(wso);
+    const resultMeetNames = getResultMeetNames(meet);
+    const normalizedResultMeetNames = new Set(resultMeetNames.map(normalize));
+
+    if (athletes.length === 0) {
+      console.error(`No athletes found for meet: ${meet}`);
+      process.exit(1);
+    }
+
+    const availableWsos = [...new Set(
+      athletes
+        .map((athlete) => athlete.wso?.trim())
+        .filter((value): value is string => Boolean(value)),
+    )].sort((left, right) => left.localeCompare(right));
+
+    const filteredAthletes = athletes.filter(
+      (athlete) => normalize(athlete.wso) === normalizedWso,
+    );
+
+    if (filteredAthletes.length === 0) {
+      console.error(`No athletes found for WSO "${wso}" in meet "${meet}".`);
+      if (availableWsos.length > 0) {
+        console.error("\nAvailable WSOs in this meet:");
+        for (const availableWso of availableWsos) {
+          console.error(`- ${availableWso}`);
+        }
+      }
+      process.exit(1);
+    }
+
+    const names = [...new Set(
+      filteredAthletes
+        .map((athlete) => athlete.name?.trim())
+        .filter((value): value is string => Boolean(value)),
+    )];
+
+    const historyRows: LiftRow[] = await convex.query(anyApi.liftingResults.getByNames, {
+      names,
+    });
+
+    const rowsByName = buildRowsByName(historyRows);
+    const targetMeetRows: LiftRow[] = [];
+    const missingResultsNames: string[] = [];
+
+    let snatchPrCount = 0;
+    let cjPrCount = 0;
+    let totalPrCount = 0;
+
+    for (const name of names) {
+      const athleteRows = rowsByName.get(name) ?? [];
+      const currentRows = athleteRows.filter(
+        (row) => normalizedResultMeetNames.has(normalize(row.meet)),
+      );
+
+      if (currentRows.length === 0) {
+        missingResultsNames.push(name);
+        continue;
+      }
+
+      targetMeetRows.push(...currentRows);
+
+      const priorRows = athleteRows.filter(
+        (row) => !normalizedResultMeetNames.has(normalize(row.meet)),
+      );
+
+      const currentSnatch = maxNullable(currentRows.map(deriveSnatchBest));
+      const currentCj = maxNullable(currentRows.map(deriveCjBest));
+      const currentTotal = maxNullable(currentRows.map(deriveTotal));
+
+      const priorSnatch = maxNullable(priorRows.map(deriveSnatchBest));
+      const priorCj = maxNullable(priorRows.map(deriveCjBest));
+      const priorTotal = maxNullable(priorRows.map(deriveTotal));
+
+      if (isPr(currentSnatch, priorSnatch)) {
+        snatchPrCount += 1;
+      }
+
+      if (isPr(currentCj, priorCj)) {
+        cjPrCount += 1;
+      }
+
+      if (isPr(currentTotal, priorTotal)) {
+        totalPrCount += 1;
+      }
+    }
+
+    let snatchAttempts = 0;
+    let snatchMakes = 0;
+    let cjAttempts = 0;
+    let cjMakes = 0;
+    let totalWeightLifted = 0;
+
+    for (const row of targetMeetRows) {
+      for (const attempt of [row.snatch1, row.snatch2, row.snatch3]) {
+        if (isRecordedAttempt(attempt)) {
+          snatchAttempts += 1;
+          if (attempt > 0) {
+            snatchMakes += 1;
+            totalWeightLifted += attempt;
+          }
+        }
+      }
+
+      for (const attempt of [row.cj1, row.cj2, row.cj3]) {
+        if (isRecordedAttempt(attempt)) {
+          cjAttempts += 1;
+          if (attempt > 0) {
+            cjMakes += 1;
+            totalWeightLifted += attempt;
+          }
+        }
+      }
+    }
+
+    const snatchMakeRate =
+      snatchAttempts > 0 ? (snatchMakes / snatchAttempts) * 100 : 0;
+    const cjMakeRate = cjAttempts > 0 ? (cjMakes / cjAttempts) * 100 : 0;
+    const totalMakeRate = (snatchMakeRate + cjMakeRate) / 2;
+
+    const Table = require('cli-table3')
+
+    const athleteTable = new Table({
+      head: ["Total Athletes", "WSO Athletes"],
+      colWidths: [30, 30]
+    })
+
+    athleteTable.push([athletes.length, filteredAthletes.length])
+
+    console.log(`${wso} WSO RESULTS FOR ${meet}`)
+    console.log(athleteTable.toString());
+
+    const makeRateTable = new Table({
+      head: ["Snatch", "CJ", "Total"],
+      colWidths: [30, 30, 30]
+    })
+
+    makeRateTable.push([
+      formatPercent(snatchMakeRate),
+      formatPercent(cjMakeRate),
+      formatPercent(totalMakeRate)
+    ])
+
+    console.log(makeRateTable.toString());
+
+    const volumeTable = new Table({
+      head: ["Total Weight Lifted"],
+      colWidth: [40]
+    })
+
+    volumeTable.push([`${totalWeightLifted}kg`])
+
+    console.log(volumeTable.toString())
+
+    const prTable = new Table({
+      head: ["Snatch PRs", "CJ PRs", "Total PRs"],
+      colWidths: [30, 30, 30]
+    })
+
+    prTable.push([snatchPrCount, cjPrCount, totalPrCount])
+
+    console.log(prTable.toString())
+  },
+});

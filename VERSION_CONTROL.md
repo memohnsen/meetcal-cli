@@ -1,4 +1,5 @@
-# 2.0.0
+# 2.0.0 - NEXT
+- [ ] meetResults flag to get results for weight class
 - [ ] club: enter club name and get same snapshot as wso
 - [ ] wrapped: enter name and get wrapped
 - [ ] club-wrapped
@@ -6,11 +7,12 @@
 - [ ] compare: enter athlete name and 2 years and compare results for 1 year vs other
 - [ ] club-compare
 - [ ] wso-compare 
+- [ ] wso - get medal count 
 - [ ] error handling for wrong flags or convex errors
 - [ ] search meet by session number and platform
 - [ ] dedup repeated names in nat rankings
 
-# 1.0.0
+# 1.0.0 - IN PROGRESS
 - [x] search: enter athlete name and get PRs and all results
     - [x] add make rates overall and by attempt
 - [x] standards: age, gender
@@ -23,5 +25,5 @@
 - [x] adap-records
 - [x] meet: get all entries for a meet
 - [x] meetResults: enter meet name and get by name list and results
-    - [ ] flag to get results for weight class
-- [ ] wso: enter wso and get snapshot of results. PRs, total weight lifted, make rate, medal count
+- [x] wso: enter wso and get snapshot of results. PRs, total weight lifted, make rate, medal count
+- [ ] publish to homebrew and npm
