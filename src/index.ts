@@ -11,6 +11,7 @@ import records from "./commands/records.js";
 import natRankings from "./commands/natRankings.js";
 import adaptive from "./commands/adaptive.js";
 import meet from "./commands/meet.js";
+import meetResults from "./commands/meetResults.js";
 
 const cli = await createCLI({
   name: "meetcal",
@@ -28,5 +29,6 @@ cli.command(intlRankings)
 cli.command(natRankings)
 cli.command(adaptive)
 cli.command(meet)
+cli.command(meetResults)
 
 await cli.run();

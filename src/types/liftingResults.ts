@@ -6,7 +6,7 @@ export default interface LiftingResults {
   date: string;
   name: string;
   age: string;
-  body_weight: number;
+  bodyWeight: number;
   weightClass?: string
   snatch1: number;
   snatch2: number;
@@ -17,6 +17,7 @@ export default interface LiftingResults {
   cj3: number;
   cjBest: number;
   total: number;
+  adaptive: boolean
 }
 
 export type AdaptiveRecord = {
