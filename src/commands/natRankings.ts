@@ -14,7 +14,7 @@ import { Rankings } from "../types/rankings";
 
 export default defineCommand({
   name: "natRankings" as const,
-  description: "Search for WSO Records for a given weight class and gender",
+  description: "Search for National Rankings for a given weight",
   options: {
     weightClass: option(z.string().min(1).optional(), {
       description: "Weight class to search for",
@@ -26,7 +26,7 @@ export default defineCommand({
     const weightClass = flags.weightClass ?? positionalClass;
 
     if (!weightClass) {
-      throw new Error('Usage: meetcal intlRankings --age Senior --gender Men --meet Worlds');
+      throw new Error("Usage: meetcal natRankings --weightClass Junior Men's 110kg");
     }
 
     const convexUrl = process.env.CONVEX_URL;

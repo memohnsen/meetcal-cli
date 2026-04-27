@@ -5,15 +5,23 @@ export default interface LiftingResults {
   meet: string;
   date: string;
   name: string;
-  age: number;
+  age: string;
   body_weight: number;
+  weightClass?: string
   snatch1: number;
   snatch2: number;
   snatch3: number;
-  snatch_best: number;
+  snatchBest: number;
   cj1: number;
   cj2: number;
   cj3: number;
-  cj_best: number;
+  cjBest: number;
   total: number;
+}
+
+export type AdaptiveRecord = {
+  weightClass: string
+  snatch: number
+  cj: number
+  total: number
 }

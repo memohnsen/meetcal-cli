@@ -10,8 +10,8 @@
     -[x] wso-records: wso and age, gender
     -[x] intl-rankings: meet and age, gender
     -[x] nat-rankings: enter weight and age group, gender and get rankings
-        -[ ] dedup repeated names, get only max
-    -[ ] adap-records: 
+        -[ ] dedup repeated names, get max only
+    -[x] adap-records: 
     -[ ] meet: enter meet name and get by name list and results
         -- flag to get results from session or weight class
     -[ ] entries: get list of entries from club for specified meet

@@ -47,18 +47,115 @@ The `search` command prints the athlete's competition PRs and meet results in ta
 
 ## Commands
 
+Most commands require `CONVEX_URL` to be set.
+
+### `help`
+
+Print the list of available commands and examples.
+
+```sh
+meetcal help
+```
+
 ### `search`
 
 Search for an athlete by name.
 
 ```sh
-meetcal-cli search --name "First Last"
-meetcal-cli search First Last
+meetcal search --name "First Last"
+meetcal search First Last
 ```
 
 Options:
 
 - `--name`, `-n`: Athlete name to search for.
+
+### `standards`
+
+Search USAW A/B standards for an age group and gender.
+
+```sh
+meetcal standards --age Senior --gender Men
+meetcal standards U17 Women
+```
+
+Options:
+
+- `--age`, `-a`: Age group to search for.
+- `--gender`, `-g`: Gender group to search for.
+
+### `qualifyingTotals`
+
+Search qualifying totals for an age group, gender, and event.
+
+```sh
+meetcal qualifyingTotals --age Senior --gender Men --event Nationals
+meetcal qualifyingTotals --age U17 --gender Women --event "AO Finals"
+```
+
+Options:
+
+- `--age`, `-a`: Age group to search for.
+- `--gender`, `-g`: Gender group to search for.
+- `--event`, `-e`: Event to search for.
+
+### `records`
+
+Search records for an age group, gender, and federation.
+
+```sh
+meetcal records --age Senior --gender Men --federation USAW
+meetcal records U17 Women IWF
+```
+
+Options:
+
+- `--age`, `-a`: Age group to search for.
+- `--gender`, `-g`: Gender group to search for.
+- `--federation`, `-f`: Record federation. Supported values include `IWF`, `USAW`, `USAMW`, and `UMWF`.
+
+### `wsoRecords`
+
+Search WSO records for an age group, gender, and WSO region.
+
+```sh
+meetcal wsoRecords --age Senior --gender Men --wso Carolinas
+meetcal wsoRecords U17 Women Carolinas
+```
+
+Options:
+
+- `--age`, `-a`: Age group to search for.
+- `--gender`, `-g`: Gender group to search for.
+- `--wso`, `-w`: WSO region to search for.
+
+### `intlRankings`
+
+Search international rankings for an age group, gender, and meet.
+
+```sh
+meetcal intlRankings --age Senior --gender Men --meet Worlds
+meetcal intlRankings --age U17 --gender Women --meet "Pan Ams"
+```
+
+Options:
+
+- `--age`, `-a`: Age group to search for.
+- `--gender`, `-g`: Gender group to search for.
+- `--meet`, `-m`: Meet to search for.
+
+### `natRankings`
+
+Search USAW national rankings for a weight class.
+
+```sh
+meetcal natRankings --weightClass "Open Men's 110kg"
+meetcal natRankings --weightClass "Junior Women's 77kg"
+```
+
+Options:
+
+- `--weightClass`, `-a`: Weight class to search for.
 
 Environment:
 
