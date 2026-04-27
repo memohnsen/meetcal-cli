@@ -22,6 +22,7 @@ export default defineCommand({
     console.log("wsoRecords: Enter age, gender, and wso to see WSO Records")
     console.log("natRankings: Enter age and class to see National Rankings")
     console.log("adaptive: Enter gender to see Adaptive American Records")
+    console.log("meet: Enter meet name and see all entries")
     console.log(" ")
     console.log("EXAMPLES")
     console.log("meetcal search Maddisen Mohnsen")
@@ -32,5 +33,6 @@ export default defineCommand({
     console.log("meetcal wsoRecords Senior Men Carolina")
     console.log("meetcal natRankings Open Men's 110kg")
     console.log("meetcal adaptive Men")
+    console.log("meetcal meet American Open Finals")
   },
 });
