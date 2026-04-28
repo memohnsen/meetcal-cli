@@ -63,6 +63,19 @@ Options:
 
 - `--name`, `-n`: Athlete name to search for.
 
+### `adaptive`
+
+Search adaptive American records by gender.
+
+```sh
+meetcal adaptive --gender Men
+meetcal adaptive Women
+```
+
+Options:
+
+- `--gender`, `-g`: Gender to search for.
+
 ### `standards`
 
 Search USAW A/B standards for an age group and gender.
@@ -107,6 +120,34 @@ Options:
 - `--gender`, `-g`: Gender group to search for.
 - `--federation`, `-f`: Record federation. Supported values include `IWF`, `USAW`, `USAMW`, and `UMWF`.
 
+### `meet`
+
+Search meet entries by meet name, session number, and platform.
+
+```sh
+meetcal meet --name "2026 Virus Weightlifting Series 2, Powered by Rogue Fitness" --sessionNumber 1 --sessionPlatform Red
+meetcal meet "2026 Virus Weightlifting Series 2, Powered by Rogue Fitness" 1 Red
+```
+
+Options:
+
+- `--name`, `-n`: Meet name to search for.
+- `--sessionNumber`, `-s`: Session number to search for.
+- `--sessionPlatform`, `-p`: Session platform to search for.
+
+### `meetResults`
+
+Search full results and event make-rate stats for a meet.
+
+```sh
+meetcal meetResults --name "2026 Virus Weightlifting Series 2, Powered by Rogue Fitness"
+meetcal meetResults "2026 Virus Weightlifting Series 2, Powered by Rogue Fitness"
+```
+
+Options:
+
+- `--name`, `-n`: Meet name to search for.
+
 ### `wsoRecords`
 
 Search WSO records for an age group, gender, and WSO region.
@@ -150,18 +191,83 @@ Options:
 
 - `--weightClass`, `-a`: Weight class to search for.
 
+### `clubResults`
+
+Analyze club performance stats for a meet, including averages, make rates, PRs, and medals.
+
+```sh
+meetcal clubResults --club "POWER AND GRACE PERFORMANCE." --meet "2025 UMWF World Championships"
+meetcal clubResults "POWER AND GRACE PERFORMANCE." "2025 UMWF World Championships"
+```
+
+Options:
+
+- `--club`, `-c`: Club name.
+- `--meet`, `-m`: Meet name.
+
+### `wso`
+
+Get meet results and summary stats for a WSO at a given meet.
+
+```sh
+meetcal wso --meet "2026 Masters National Championships & National University Championships" --wso Carolina
+meetcal wso "2026 Masters National Championships & National University Championships" Carolina
+```
+
+Options:
+
+- `--meet`, `-m`: Meet name.
+- `--wso`, `-w`: WSO region.
+
+### `wsoOWLCMS`
+
+Export Carolina WSO records as an OWLCMS CSV.
+
+```sh
+meetcal wsoOWLCMS
+```
+
+Output:
+
+- Writes `wsoOWLCMS.csv` to `~/Downloads`.
+
+### `usamwResultsScraper`
+
+Export USAMW PDF results as Convex `lifting_results` seed data.
+
+```sh
+meetcal usamwResultsScraper --meet "2026 USA Masters Nationals" --date 2026-03-29 --pdf "https://..."
+meetcal usamwResultsScraper --meet "2026 USA Masters Nationals" --date 2026-03-29 --pdf "https://..." --pdf "https://..."
+meetcal usamwResultsScraper "2026 USA Masters Nationals" 2026-03-29 "https://..."
+```
+
+Options:
+
+- `--meet`, `-m`: Meet name.
+- `--date`, `-d`: Meet date in `YYYY-MM-DD` format.
+- `--adaptive`, `-a`: Mark results as adaptive.
+- `--pdf`, `-p`: PDF URL. Repeat this flag for multiple PDFs.
+
+Output:
+
+- Writes `usamwResultsScraper.ts` to `~/Downloads`.
+
 ## Build
 
-Build the CLI into `dist/`:
+Build compressed standalone archives for all configured platforms:
 
 ```sh
 bunli build
 ```
 
-After building, the package binary points to:
+Expected release artifacts:
 
 ```sh
-./dist/index.js
+dist/darwin-arm64.tar.gz
+dist/darwin-x64.tar.gz
+dist/linux-arm64.tar.gz
+dist/linux-x64.tar.gz
+dist/windows-x64.tar.gz
 ```
 
 ## Developer Workflow
