@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
+import { CONVEX_URL } from "../config";
 import { AthleteRow, LiftRow, RESULT_MEET_ALIASES } from "../types/wso";
 import type { ClubMedalDetail, ClubPrDetail } from "../types/wso";
 
@@ -35,13 +36,7 @@ export default defineCommand({
       throw new Error('Usage: meetcal wso "2026 Masters National Championships & National University Championships" Carolina');
     }
 
-    const convexUrl = process.env.CONVEX_URL;
-
-    if (!convexUrl) {
-      throw new Error("Missing CONVEX_URL. Add it to .env.local or export it before running the CLI.");
-    }
-
-    const convex = new ConvexHttpClient(convexUrl);
+    const convex = new ConvexHttpClient(CONVEX_URL);
 
     function normalize(value: string | null | undefined): string {
       return value?.trim().toLowerCase() ?? "";

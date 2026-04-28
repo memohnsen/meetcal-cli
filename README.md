@@ -4,24 +4,19 @@ A Bun-based command line tool for querying MeetCal lifting data from Convex.
 
 ## Requirements
 
-- [Bun](https://bun.sh/)
-- Access to the MeetCal Convex deployment URL
-
-Create a local environment file before running commands:
-
-```sh
-CONVEX_URL=https://your-convex-deployment.convex.cloud
-```
-
-Save that value in `.env.local`, or export it in your shell:
-
-```sh
-export CONVEX_URL=https://your-convex-deployment.convex.cloud
-```
-
-`.env.local` is ignored by git and should not be committed.
+- [Bun](https://bun.sh/) for local development
+- [Homebrew](https://brew.sh/) for installing the released CLI on macOS or Linux
 
 ## Install
+
+Install the released CLI with Homebrew:
+
+```sh
+brew tap memohnsen/tap
+brew install meetcal
+```
+
+Install dependencies for local development:
 
 ```sh
 bun install
@@ -46,8 +41,6 @@ bunli dev search Maddisen Mohnsen
 The `search` command prints the athlete's competition PRs and meet results in tables.
 
 ## Commands
-
-Most commands require `CONVEX_URL` to be set.
 
 ### `help`
 
@@ -156,10 +149,6 @@ meetcal natRankings --weightClass "Junior Women's 77kg"
 Options:
 
 - `--weightClass`, `-a`: Weight class to search for.
-
-Environment:
-
-- `CONVEX_URL`: Required. Convex deployment URL used by `ConvexHttpClient`.
 
 ## Build
 

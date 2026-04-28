@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
+import { CONVEX_URL } from "../config";
 import { Athletes } from "../types/athletes";
 
 /* 
@@ -42,13 +43,7 @@ export default defineCommand({
       throw new Error('Usage: meetcal meet "2026 Virus Weightlifting Series 2, Powered by Rogue Fitness"');
     }
 
-    const convexUrl = process.env.CONVEX_URL;
-
-    if (!convexUrl) {
-      throw new Error("Missing CONVEX_URL. Add it to .env.local or export it before running the CLI.");
-    }
-
-    const convex = new ConvexHttpClient(convexUrl);
+    const convex = new ConvexHttpClient(CONVEX_URL);
     const results = await convex.query(anyApi.athletes.getByMeet, { meet: meet, sessionNumber: sessionNumber, sessionPlatform: platform });
 
     const Table = require('cli-table3')

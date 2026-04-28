@@ -12,10 +12,11 @@ export default defineConfig({
   build: {
     entry: "./src/index.ts",
     outdir: "./dist",
-    targets: ["native"],
+    outfile: "meetcal",
+    targets: ["all"],
     minify: true,
     sourcemap: true,
-    compress: false,
+    compress: true,
   },
 
   dev: {

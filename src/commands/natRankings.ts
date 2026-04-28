@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
+import { CONVEX_URL } from "../config";
 import { Rankings } from "../types/rankings";
 
 /* 
@@ -29,13 +30,7 @@ export default defineCommand({
       throw new Error("Usage: meetcal natRankings --weightClass Junior Men's 110kg");
     }
 
-    const convexUrl = process.env.CONVEX_URL;
-
-    if (!convexUrl) {
-      throw new Error("Missing CONVEX_URL. Add it to .env.local or export it before running the CLI.");
-    }
-
-    const convex = new ConvexHttpClient(convexUrl);
+    const convex = new ConvexHttpClient(CONVEX_URL);
     const results = await convex.query(anyApi.liftingResults.getNationalRankings, {
       ageCategory: weightClass,
       federation: "USAW"
@@ -48,7 +43,7 @@ export default defineCommand({
       colWidths: [8, 40, 10]
     })
 
-    const sortedResults = [...results].sort((a: Rankings, b: Rankings) => { a[0] - b[0] });
+    const sortedResults = [...results].sort((a: Rankings, b: Rankings) => a.ranking - b.ranking);
     let ranking = 1
 
     sortedResults.forEach((result: Rankings) => {

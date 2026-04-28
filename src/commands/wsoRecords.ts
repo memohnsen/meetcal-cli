@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
+import { CONVEX_URL } from "../config";
 import { Record } from "../types/records";
 
 /* 
@@ -39,13 +40,7 @@ export default defineCommand({
       throw new Error('Usage: meetcal wsoRecords --age Senior --gender Men --wso Carolina');
     }
 
-    const convexUrl = process.env.CONVEX_URL;
-
-    if (!convexUrl) {
-      throw new Error("Missing CONVEX_URL. Add it to .env.local or export it before running the CLI.");
-    }
-
-    const convex = new ConvexHttpClient(convexUrl);
+    const convex = new ConvexHttpClient(CONVEX_URL);
     const results = await convex.query(anyApi.wsoRecords.getByWso, {
       ageCategory: age,
       gender: gender,

@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
+import { CONVEX_URL } from "../config";
 import { Rankings } from "../types/rankings";
 
 /* 
@@ -39,13 +40,7 @@ export default defineCommand({
       throw new Error('Usage: meetcal intlRankings --age Senior --gender Men --meet Worlds');
     }
 
-    const convexUrl = process.env.CONVEX_URL;
-
-    if (!convexUrl) {
-      throw new Error("Missing CONVEX_URL. Add it to .env.local or export it before running the CLI.");
-    }
-
-    const convex = new ConvexHttpClient(convexUrl);
+    const convex = new ConvexHttpClient(CONVEX_URL);
     const results = await convex.query(anyApi.intlRankings.getFiltered, {
       ageCategory: age,
       gender: gender,
@@ -59,7 +54,7 @@ export default defineCommand({
       colWidths: [8, 40, 15, 20, 10]
     })
 
-    const sortedResults = [...results].sort((a: Rankings, b: Rankings) => { a[0] - b[0] });
+    const sortedResults = [...results].sort((a: Rankings, b: Rankings) => a.ranking - b.ranking);
 
     sortedResults.forEach((result: Rankings) => {
       table.push(

@@ -1,6 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
+import { CONVEX_URL } from "../config";
 import { z } from "zod";
 import { Athletes } from "../types/athletes";
 import LiftingResults, { type AttemptKey } from "../types/liftingResults";
@@ -378,12 +379,7 @@ export default defineCommand({
       throw new Error('Usage: meetcal clubResults --club "POWER AND GRACE PERFORMANCE." --meet "2025 UMWF World Championships"');
     }
 
-    const convexUrl = process.env.CONVEX_URL;
-    if (!convexUrl) {
-      throw new Error("Missing CONVEX_URL. Add it to .env.local or export it before running the CLI.");
-    }
-
-    const convex = new ConvexHttpClient(convexUrl);
+    const convex = new ConvexHttpClient(CONVEX_URL);
     const athletes: Athletes[] = await convex.query(anyApi.athletes.getByMeet, { meet });
     const clubAthletes = athletes.filter((athlete) => normalize(athlete.club) === normalize(club));
     const names = [...new Set(clubAthletes.map((athlete) => athlete.name).filter(Boolean))];

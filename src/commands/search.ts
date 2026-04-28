@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
+import { CONVEX_URL } from "../config";
 import type LiftingResults from "../types/liftingResults";
 import type { AttemptKey } from "../types/liftingResults";
 
@@ -32,13 +33,7 @@ export default defineCommand({
       throw new Error('Usage: meetcal search --name "First Last"');
     }
 
-    const convexUrl = process.env.CONVEX_URL;
-
-    if (!convexUrl) {
-      throw new Error("Missing CONVEX_URL. Add it to .env.local or export it before running the CLI.");
-    }
-
-    const convex = new ConvexHttpClient(convexUrl);
+    const convex = new ConvexHttpClient(CONVEX_URL);
     const results = await convex.query(anyApi.liftingResults.getByNames, {
       names: [name],
     });

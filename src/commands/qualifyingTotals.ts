@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
+import { CONVEX_URL } from "../config";
 import { QualifyingTotal } from "../types/qualTotals";
 
 /* 
@@ -39,13 +40,7 @@ export default defineCommand({
       throw new Error('Usage: meetcal qualifyingTotals --age Senior --gender Men --event Nationals');
     }
 
-    const convexUrl = process.env.CONVEX_URL;
-
-    if (!convexUrl) {
-      throw new Error("Missing CONVEX_URL. Add it to .env.local or export it before running the CLI.");
-    }
-
-    const convex = new ConvexHttpClient(convexUrl);
+    const convex = new ConvexHttpClient(CONVEX_URL);
     const results = await convex.query(anyApi.qualifyingTotals.getFiltered, {
       ageCategory: age,
       gender: gender,
@@ -65,10 +60,9 @@ export default defineCommand({
       )
     })
 
-    table.sort((a: QualifyingTotal[], b: QualifyingTotal[]) => a[1] - b[1])
+    table.sort((a: unknown[], b: unknown[]) => Number(a[1]) - Number(b[1]))
 
     console.log(`QUALIFYING TOTALS FOR ${age} ${gender} ${event}`)
     console.log(table.toString());
   },
 });
-

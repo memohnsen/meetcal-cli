@@ -1,10 +1,10 @@
 {
   "name": "meetcal-cli",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A CLI built with Bunli",
   "author": "",
   "bin": {
-    "meetcal": "./dist/index.js"
+    "meetcal": "./dist/index"
   },
   "type": "module",
   "scripts": {

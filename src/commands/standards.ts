@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
+import { CONVEX_URL } from "../config";
 import type Standards from "../types/standards";
 
 /* 
@@ -34,13 +35,7 @@ export default defineCommand({
       throw new Error('Usage: meetcal standards --age "Senior" --gender "Men"');
     }
 
-    const convexUrl = process.env.CONVEX_URL;
-
-    if (!convexUrl) {
-      throw new Error("Missing CONVEX_URL. Add it to .env.local or export it before running the CLI.");
-    }
-
-    const convex = new ConvexHttpClient(convexUrl);
+    const convex = new ConvexHttpClient(CONVEX_URL);
     const results = await convex.query(anyApi.standards.getFiltered, {
       ageCategory: age.toLowerCase(),
       gender: gender.toLowerCase()
@@ -59,7 +54,7 @@ export default defineCommand({
       )
     })
 
-    table.sort((a: Standards[], b: Standards[]) => a[1] - b[1])
+    table.sort((a: unknown[], b: unknown[]) => Number(a[1]) - Number(b[1]))
 
     console.log(`STANDARDS FOR ${age} ${gender}`)
     console.log(table.toString());
