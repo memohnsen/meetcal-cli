@@ -6,6 +6,7 @@ export type AthleteRow = {
 export type LiftRow = {
   meet: string;
   name: string;
+  age?: string | null;
   snatch1?: number | null;
   snatch2?: number | null;
   snatch3?: number | null;
@@ -15,6 +16,21 @@ export type LiftRow = {
   cj3?: number | null;
   cjBest?: number | null;
   total?: number | null;
+};
+
+export type ClubPrDetail = {
+  name: string;
+  movement: "Snatch" | "Clean & Jerk" | "Total";
+  newPr: number;
+  previousPr: number;
+};
+
+export type ClubMedalDetail = {
+  name: string;
+  age: string;
+  movement: "Snatch" | "Clean & Jerk" | "Total";
+  place: number;
+  result: number;
 };
 
 export const RESULT_MEET_ALIASES: Record<string, string[]> = {

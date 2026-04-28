@@ -1,16 +1,15 @@
 # 2.0.0 - NEXT
+- [ ] comment over logic of existing commands
+- [ ] dedup repeated names in nat rankings
 - [ ] meetResults flag to get results for weight class
-- [ ] club: enter club name and get same snapshot as wso
+- [ ] search meet by session number and platform
 - [ ] wrapped: enter name and get wrapped
 - [ ] club-wrapped
 - [ ] wso-wrapped 
 - [ ] compare: enter athlete name and 2 years and compare results for 1 year vs other
 - [ ] club-compare
 - [ ] wso-compare 
-- [ ] wso - get medal count 
 - [ ] error handling for wrong flags or convex errors
-- [ ] search meet by session number and platform
-- [ ] dedup repeated names in nat rankings
 
 # 1.0.0 - IN PROGRESS
 - [x] search: enter athlete name and get PRs and all results
@@ -26,4 +25,8 @@
 - [x] meet: get all entries for a meet
 - [x] meetResults: enter meet name and get by name list and results
 - [x] wso: enter wso and get snapshot of results. PRs, total weight lifted, make rate, medal count
+- [x] convert carolinas wso sheets to owlcms report
+- [x] convert usamw results scraper
+- [x] convert pg results scraper
+- [x] wso - get medal count 
 - [ ] publish to homebrew and npm

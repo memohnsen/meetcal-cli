@@ -3,8 +3,8 @@ import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
 import type LiftingResults from "../types/liftingResults";
+import type { AttemptKey } from "../types/liftingResults";
 
-type AttemptKey = "snatch1" | "snatch2" | "snatch3" | "cj1" | "cj2" | "cj3";
 const snatchAttempts: AttemptKey[] = ["snatch1", "snatch2", "snatch3"];
 const cjAttempts: AttemptKey[] = ["cj1", "cj2", "cj3"];
 

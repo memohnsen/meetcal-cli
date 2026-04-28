@@ -1,7 +1,10 @@
 export default interface LiftingResults {
-  id: number;
+  id?: number;
   convexId?: string;
-  event_id: string;
+  event_id?: string;
+  eventId: string;
+  federation?: string;
+  legacyId?: number;
   meet: string;
   date: string;
   name: string;
@@ -19,6 +22,8 @@ export default interface LiftingResults {
   total: number;
   adaptive: boolean
 }
+
+export type AttemptKey = "snatch1" | "snatch2" | "snatch3" | "cj1" | "cj2" | "cj3";
 
 export type AdaptiveRecord = {
   weightClass: string

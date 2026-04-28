@@ -3,6 +3,7 @@ import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
 import { AthleteRow, LiftRow, RESULT_MEET_ALIASES } from "../types/wso";
+import type { ClubMedalDetail, ClubPrDetail } from "../types/wso";
 
 /* 
  * Get WSO results for meet
@@ -128,6 +129,75 @@ export default defineCommand({
 
       return rowsByName;
     }
+
+    function movementRank(movement: string): number {
+      if (movement === "Snatch") return 0;
+      if (movement === "Clean & Jerk") return 1;
+      if (movement === "Total") return 2;
+      return 3;
+    }
+
+    function compareDetailRows(left: { name: string; movement: string }, right: { name: string; movement: string }): number {
+      return left.name.localeCompare(right.name) || movementRank(left.movement) - movementRank(right.movement);
+    }
+
+    function calculateMedalDetails(
+      memberNames: Set<string>,
+      allMeetRows: LiftRow[],
+    ): ClubMedalDetail[] {
+      const byMeetAndAge = new Map<string, LiftRow[]>();
+      const details: ClubMedalDetail[] = [];
+
+      for (const row of allMeetRows) {
+        if (deriveTotal(row) == null || deriveTotal(row) === 0) {
+          continue;
+        }
+
+        const key = `${row.meet}\u0000${row.age ?? ""}`;
+        const rows = byMeetAndAge.get(key) ?? [];
+        rows.push(row);
+        byMeetAndAge.set(key, rows);
+      }
+
+      for (const rows of byMeetAndAge.values()) {
+        const totalRankings = [...rows]
+          .filter((row) => (deriveTotal(row) ?? 0) > 0)
+          .sort((left, right) => (deriveTotal(right) ?? 0) - (deriveTotal(left) ?? 0))
+          .slice(0, 3);
+        const snatchRankings = [...rows]
+          .filter((row) => (deriveSnatchBest(row) ?? 0) > 0)
+          .sort((left, right) => (deriveSnatchBest(right) ?? 0) - (deriveSnatchBest(left) ?? 0))
+          .slice(0, 3);
+        const cjRankings = [...rows]
+          .filter((row) => (deriveCjBest(row) ?? 0) > 0)
+          .sort((left, right) => (deriveCjBest(right) ?? 0) - (deriveCjBest(left) ?? 0))
+          .slice(0, 3);
+
+        totalRankings.forEach((row, index) => {
+          const result = deriveTotal(row);
+          if (memberNames.has(row.name) && result != null) {
+            details.push({ name: row.name, age: row.age ?? "", movement: "Total", place: index + 1, result });
+          }
+        });
+
+        snatchRankings.forEach((row, index) => {
+          const result = deriveSnatchBest(row);
+          if (memberNames.has(row.name) && result != null) {
+            details.push({ name: row.name, age: row.age ?? "", movement: "Snatch", place: index + 1, result });
+          }
+        });
+
+        cjRankings.forEach((row, index) => {
+          const result = deriveCjBest(row);
+          if (memberNames.has(row.name) && result != null) {
+            details.push({ name: row.name, age: row.age ?? "", movement: "Clean & Jerk", place: index + 1, result });
+          }
+        });
+      }
+
+      return details;
+    }
+
     const athletes: AthleteRow[] = await convex.query(anyApi.athletes.getByMeet, {
       meet,
     });
@@ -179,6 +249,7 @@ export default defineCommand({
     let snatchPrCount = 0;
     let cjPrCount = 0;
     let totalPrCount = 0;
+    const prDetails: ClubPrDetail[] = [];
 
     for (const name of names) {
       const athleteRows = rowsByName.get(name) ?? [];
@@ -207,16 +278,32 @@ export default defineCommand({
 
       if (isPr(currentSnatch, priorSnatch)) {
         snatchPrCount += 1;
+        if (currentSnatch != null) {
+          prDetails.push({ name, movement: "Snatch", newPr: currentSnatch, previousPr: priorSnatch ?? 0 });
+        }
       }
 
       if (isPr(currentCj, priorCj)) {
         cjPrCount += 1;
+        if (currentCj != null) {
+          prDetails.push({ name, movement: "Clean & Jerk", newPr: currentCj, previousPr: priorCj ?? 0 });
+        }
       }
 
       if (isPr(currentTotal, priorTotal)) {
         totalPrCount += 1;
+        if (currentTotal != null) {
+          prDetails.push({ name, movement: "Total", newPr: currentTotal, previousPr: priorTotal ?? 0 });
+        }
       }
     }
+
+    const allMeetRowsNested: LiftRow[][] = await Promise.all(
+      resultMeetNames.map((resultMeetName) =>
+        convex.query(anyApi.liftingResults.getByMeet, { meet: resultMeetName }),
+      ),
+    );
+    const medalDetails = calculateMedalDetails(new Set(names), allMeetRowsNested.flat());
 
     let snatchAttempts = 0;
     let snatchMakes = 0;
@@ -293,5 +380,35 @@ export default defineCommand({
     prTable.push([snatchPrCount, cjPrCount, totalPrCount])
 
     console.log(prTable.toString())
+
+    if (prDetails.length > 0) {
+      const prDetailTable = new Table({
+        head: ["Athlete", "Movement", "New PR", "Previous PR"],
+        colWidths: [30, 18, 10, 12],
+        wordWrap: true,
+      })
+
+      for (const detail of prDetails.sort(compareDetailRows)) {
+        prDetailTable.push([detail.name, detail.movement, detail.newPr, detail.previousPr])
+      }
+
+      console.log("ATHLETES WITH PRS")
+      console.log(prDetailTable.toString())
+    }
+
+    if (medalDetails.length > 0) {
+      const medalDetailTable = new Table({
+        head: ["Athlete", "Age", "Movement", "Place", "Result"],
+        colWidths: [30, 30, 18, 8, 10],
+        wordWrap: true,
+      })
+
+      for (const detail of medalDetails.sort(compareDetailRows)) {
+        medalDetailTable.push([detail.name, detail.age, detail.movement, detail.place, detail.result])
+      }
+
+      console.log("ATHLETES WITH MEDALS")
+      console.log(medalDetailTable.toString())
+    }
   },
 });

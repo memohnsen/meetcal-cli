@@ -13,6 +13,9 @@ import adaptive from "./commands/adaptive.js";
 import meet from "./commands/meet.js";
 import meetResults from "./commands/meetResults.js";
 import wsoMeetResults from "./commands/wsoMeetResults.js";
+import wsoOWLCMS from "./commands/wsoOWLCMS.js";
+import usamwResultsScraper from "./commands/usamwResultsScraper.js";
+import clubResults from "./commands/clubResults.js";
 
 const cli = await createCLI({
   name: "meetcal",
@@ -32,5 +35,8 @@ cli.command(adaptive)
 cli.command(meet)
 cli.command(meetResults)
 cli.command(wsoMeetResults)
+cli.command(wsoOWLCMS)
+cli.command(usamwResultsScraper)
+cli.command(clubResults)
 
 await cli.run();
