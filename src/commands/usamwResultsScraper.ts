@@ -5,6 +5,11 @@ import { join } from "node:path";
 import { z } from "zod";
 import type LiftingResults from "../types/liftingResults";
 import type { PdfTextItem, UsamwScraperArgs } from "../types/usamwResultsScraper";
+import { formatValue } from "../utils/format";
+
+/* Search for meet name and google drive results url to get results in typescript object
+ * meetcal usamwResultsScraper --meet '2026 USA Masters Nationals' --date 2026-03-29 --pdf 'https://...'
+ */
 
 function extractGoogleDriveFileId(url: string): string | null {
   return url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)?.[1] ?? url.match(/[?&]id=([a-zA-Z0-9_-]+)/)?.[1] ?? null;
@@ -35,6 +40,7 @@ async function fetchBytes(url: string): Promise<Uint8Array> {
   return new Uint8Array(await response.arrayBuffer());
 }
 
+// missed attempts are denoted by red text and strikethrough``
 function isRedFill(value: unknown): boolean {
   if (!Array.isArray(value) || value.length < 3) {
     return false;
@@ -116,6 +122,7 @@ async function extractPdfTextItems(pdfBytes: Uint8Array): Promise<Map<number, Pd
   return pages;
 }
 
+// map to Convex db format for age
 function toAgeCategory(ageCode: string, weightCategory: string): string | null {
   const match = ageCode.match(/^([MW])(\d+)$/);
   if (!match) {
@@ -277,16 +284,6 @@ function parseResultsFromPages(
   return results;
 }
 
-function formatValue(value: string | number | boolean | undefined): string {
-  if (value === undefined) {
-    return "undefined";
-  }
-  if (typeof value === "string") {
-    return JSON.stringify(value);
-  }
-  return String(value);
-}
-
 function writeConvexResults(results: LiftingResults[]): string {
   const fields: Array<keyof LiftingResults> = [
     "adaptive",
@@ -398,7 +395,6 @@ function usage(): string {
   return [
     'Usage with built CLI: meetcal usamwResultsScraper --meet "2026 USA Masters Nationals" --date 2026-03-29 --pdf "https://..." --pdf "https://..."',
     'Usage with bunli dev: bunli dev usamwResultsScraper "2026 USA Masters Nationals" 2026-03-29 "https://..." "https://..."',
-    "When splitting across lines in zsh, end each continued line with a backslash.",
   ].join("\n");
 }
 

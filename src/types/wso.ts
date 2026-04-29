@@ -3,21 +3,6 @@ export type AthleteRow = {
   wso?: string | null;
 };
 
-export type LiftRow = {
-  meet: string;
-  name: string;
-  age?: string | null;
-  snatch1?: number | null;
-  snatch2?: number | null;
-  snatch3?: number | null;
-  snatchBest?: number | null;
-  cj1?: number | null;
-  cj2?: number | null;
-  cj3?: number | null;
-  cjBest?: number | null;
-  total?: number | null;
-};
-
 export type ClubPrDetail = {
   name: string;
   movement: "Snatch" | "Clean & Jerk" | "Total";

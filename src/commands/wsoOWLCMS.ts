@@ -3,17 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import type { CarolinaTab, WsoOwlCmsParsedBlock, WsoOwlCmsReferenceMeta } from "../types/wsoOWLCMS";
-
-const CAROLINA_SHEET_ID = "1rKFzpkLCT-FE2SzM0qpUOoZ788YHl7dg";
-const REFERENCE_SPREADSHEET_ID = "1ZI9TOZ8Ql-ACxNIcytsPXrWfetZFXyjg";
-const REFERENCE_GID = "1911965444";
-
-const CAROLINA_TABS = {
-  youth: "1785893123",
-  junior: "1157313505",
-  senior: "2109027801",
-  masters: "448005775",
-} as const;
+import { CAROLINA_SHEET_ID, REFERENCE_SPREADSHEET_ID, REFERENCE_GID, CAROLINA_TABS } from "../config";
 
 const OUTPUT_FIELDS = [
   "federation",

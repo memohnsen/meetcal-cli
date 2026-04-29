@@ -40,6 +40,10 @@ export default defineCommand({
       colWidths: [30, 10, 10, 10]
     })
 
+    // Age in the db is a combo of age and weight class 
+    // Open Women's 86kg, Master's (40-44) Men's 95kg
+    //
+    // Use regex to extract gender
     const getGender = (age: string) => {
       if (gender.toLowerCase() === "men") {
         return /\bmen\b/i.test(age) && !/\bwomen\b/i.test(age);
@@ -48,10 +52,13 @@ export default defineCommand({
       }
     }
 
+    // get year from date string
     const getYear = (date: string) => {
       return Number(date.match(/\b\d{4}\b/)?.[0] ?? 0)
     }
 
+    // weight class is last portion of age db column
+    // get numbers before kg, including + if there
     const getWeightClass = (age: string) => {
       return age.match(/\b\d+\+?(?=kg)(?![^()]*\))/i)?.[0]
     }
@@ -75,6 +82,7 @@ export default defineCommand({
       })
     })
 
+    // sort by weight class, if + then put as last
     const sortedRecords = [...recordsByClass.values()].sort((a, b) => {
       const aClass = a.weightClass.match(/^(\d+)(\+)?$/);
       const bClass = b.weightClass.match(/^(\d+)(\+)?$/);

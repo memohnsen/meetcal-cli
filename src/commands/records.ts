@@ -54,6 +54,7 @@ export default defineCommand({
       colWidths: [30, 15, 15, 15]
     })
 
+    // sort by weight class, find class with + and move to end
     const sortedResults = [...results].sort((a: Record, b: Record) => {
       const aWeightClass = a.weightClass.match(/^(\d+)(\+)?(?:kg)?$/i);
       const bWeightClass = b.weightClass.match(/^(\d+)(\+)?(?:kg)?$/i);

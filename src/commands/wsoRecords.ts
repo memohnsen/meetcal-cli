@@ -54,6 +54,7 @@ export default defineCommand({
       colWidths: [30, 15, 15, 15]
     })
 
+    // same thing as the others, sort by classes, put + at the end
     const sortedResults = [...results].sort((a: Record, b: Record) => {
       const aWeightClass = a.weightClass.match(/^(\d+)(\+)?(?:kg)?$/i);
       const bWeightClass = b.weightClass.match(/^(\d+)(\+)?(?:kg)?$/i);

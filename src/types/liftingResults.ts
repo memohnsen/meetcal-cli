@@ -24,6 +24,8 @@ export default interface LiftingResults {
 }
 
 export type AttemptKey = "snatch1" | "snatch2" | "snatch3" | "cj1" | "cj2" | "cj3";
+export const snatchAttempts: AttemptKey[] = ["snatch1", "snatch2", "snatch3"];
+export const cjAttempts: AttemptKey[] = ["cj1", "cj2", "cj3"];
 
 export type AdaptiveRecord = {
   weightClass: string

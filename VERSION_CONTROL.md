@@ -1,5 +1,5 @@
-# 2.0.0 - NEXT
-- [ ] comment over logic of existing commands
+# 2.0.0 - IN-PROGRESS
+- [x] comment over logic of existing commands
 - [ ] dedup repeated names in nat rankings
 - [ ] meetResults flag to get results for weight class
 - [ ] search meet by session number and platform
@@ -11,7 +11,7 @@
 - [ ] wso-compare 
 - [ ] error handling for wrong flags or convex errors
 
-# 1.0.0 - IN PROGRESS
+# 1.0.0
 - [x] search: enter athlete name and get PRs and all results
     - [x] add make rates overall and by attempt
 - [x] standards: age, gender
@@ -29,4 +29,4 @@
 - [x] convert usamw results scraper
 - [x] convert pg results scraper
 - [x] wso - get medal count 
-- [ ] publish to homebrew and npm
+- [x] publish to homebrew

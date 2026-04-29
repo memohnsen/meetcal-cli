@@ -3,8 +3,13 @@ import { z } from "zod";
 import { ConvexHttpClient } from "convex/browser";
 import { anyApi } from "convex/server";
 import { CONVEX_URL } from "../config";
-import { AthleteRow, LiftRow, RESULT_MEET_ALIASES } from "../types/wso";
+import { AthleteRow, RESULT_MEET_ALIASES } from "../types/wso";
 import type { ClubMedalDetail, ClubPrDetail } from "../types/wso";
+import LiftingResults from "../types/liftingResults";
+import { formatPercent, maxNullable, maxPositive } from "../utils/format";
+import { normalize } from "../utils/normalize";
+import { movementRank } from "../utils/sortByMovement";
+import { deriveTotal, deriveSnatchBest, deriveCjBest } from "../utils/deriveBests";
 
 /* 
  * Get WSO results for meet
@@ -38,63 +43,8 @@ export default defineCommand({
 
     const convex = new ConvexHttpClient(CONVEX_URL);
 
-    function normalize(value: string | null | undefined): string {
-      return value?.trim().toLowerCase() ?? "";
-    }
-
     function getResultMeetNames(meet: string): string[] {
       return [meet, ...(RESULT_MEET_ALIASES[meet] ?? [])];
-    }
-
-    function formatPercent(value: number): string {
-      return `${value.toFixed(1)}%`;
-    }
-
-    function maxPositive(values: Array<number | null | undefined>): number | null {
-      const successful = values.filter(
-        (value): value is number => typeof value === "number" && value > 0,
-      );
-
-      if (successful.length === 0) {
-        return null;
-      }
-
-      return Math.max(...successful);
-    }
-
-    function maxNullable(values: Array<number | null | undefined>): number | null {
-      const numbers = values.filter(
-        (value): value is number => typeof value === "number",
-      );
-
-      if (numbers.length === 0) {
-        return null;
-      }
-
-      return Math.max(...numbers);
-    }
-
-    function deriveSnatchBest(row: LiftRow): number | null {
-      return row.snatchBest ?? maxPositive([row.snatch1, row.snatch2, row.snatch3]);
-    }
-
-    function deriveCjBest(row: LiftRow): number | null {
-      return row.cjBest ?? maxPositive([row.cj1, row.cj2, row.cj3]);
-    }
-
-    function deriveTotal(row: LiftRow): number | null {
-      if (typeof row.total === "number") {
-        return row.total;
-      }
-
-      const snatchBest = deriveSnatchBest(row);
-      const cjBest = deriveCjBest(row);
-
-      if (snatchBest == null || cjBest == null) {
-        return null;
-      }
-
-      return snatchBest + cjBest;
     }
 
     function isRecordedAttempt(value: number | null | undefined): value is number {
@@ -113,8 +63,8 @@ export default defineCommand({
       return current > priorMax;
     }
 
-    function buildRowsByName(rows: LiftRow[]): Map<string, LiftRow[]> {
-      const rowsByName = new Map<string, LiftRow[]>();
+    function buildRowsByName(rows: LiftingResults[]): Map<string, LiftingResults[]> {
+      const rowsByName = new Map<string, LiftingResults[]>();
 
       for (const row of rows) {
         const existing = rowsByName.get(row.name) ?? [];
@@ -125,22 +75,15 @@ export default defineCommand({
       return rowsByName;
     }
 
-    function movementRank(movement: string): number {
-      if (movement === "Snatch") return 0;
-      if (movement === "Clean & Jerk") return 1;
-      if (movement === "Total") return 2;
-      return 3;
-    }
-
     function compareDetailRows(left: { name: string; movement: string }, right: { name: string; movement: string }): number {
       return left.name.localeCompare(right.name) || movementRank(left.movement) - movementRank(right.movement);
     }
 
     function calculateMedalDetails(
       memberNames: Set<string>,
-      allMeetRows: LiftRow[],
+      allMeetRows: LiftingResults[],
     ): ClubMedalDetail[] {
-      const byMeetAndAge = new Map<string, LiftRow[]>();
+      const byMeetAndAge = new Map<string, LiftingResults[]>();
       const details: ClubMedalDetail[] = [];
 
       for (const row of allMeetRows) {
@@ -233,12 +176,12 @@ export default defineCommand({
         .filter((value): value is string => Boolean(value)),
     )];
 
-    const historyRows: LiftRow[] = await convex.query(anyApi.liftingResults.getByNames, {
+    const historyRows: LiftingResults[] = await convex.query(anyApi.liftingResults.getByNames, {
       names,
     });
 
     const rowsByName = buildRowsByName(historyRows);
-    const targetMeetRows: LiftRow[] = [];
+    const targetMeetRows: LiftingResults[] = [];
     const missingResultsNames: string[] = [];
 
     let snatchPrCount = 0;
@@ -293,7 +236,7 @@ export default defineCommand({
       }
     }
 
-    const allMeetRowsNested: LiftRow[][] = await Promise.all(
+    const allMeetRowsNested: LiftingResults[][] = await Promise.all(
       resultMeetNames.map((resultMeetName) =>
         convex.query(anyApi.liftingResults.getByMeet, { meet: resultMeetName }),
       ),
