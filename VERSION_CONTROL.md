@@ -1,6 +1,6 @@
 # 2.0.0 - IN-PROGRESS
 - [x] comment over logic of existing commands
-- [ ] dedup repeated names in nat rankings
+- [x] dedup repeated names in nat rankings
 - [ ] meetResults flag to get results for weight class
 - [ ] search meet by session number and platform
 - [ ] wrapped: enter name and get wrapped
@@ -10,6 +10,7 @@
 - [ ] club-compare
 - [ ] wso-compare 
 - [ ] error handling for wrong flags or convex errors
+- [ ] update brew repo, update version, build new release
 
 # 1.0.0
 - [x] search: enter athlete name and get PRs and all results

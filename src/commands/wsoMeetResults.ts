@@ -6,10 +6,11 @@ import { CONVEX_URL } from "../config";
 import { AthleteRow, RESULT_MEET_ALIASES } from "../types/wso";
 import type { ClubMedalDetail, ClubPrDetail } from "../types/wso";
 import LiftingResults from "../types/liftingResults";
-import { formatPercent, maxNullable, maxPositive } from "../utils/format";
+import { formatPercent, maxNullable } from "../utils/format";
 import { normalize } from "../utils/normalize";
 import { movementRank } from "../utils/sortByMovement";
 import { deriveTotal, deriveSnatchBest, deriveCjBest } from "../utils/deriveBests";
+import { buildRowsByName } from "../utils/buildRowsByName";
 
 /* 
  * Get WSO results for meet
@@ -61,18 +62,6 @@ export default defineCommand({
       }
 
       return current > priorMax;
-    }
-
-    function buildRowsByName(rows: LiftingResults[]): Map<string, LiftingResults[]> {
-      const rowsByName = new Map<string, LiftingResults[]>();
-
-      for (const row of rows) {
-        const existing = rowsByName.get(row.name) ?? [];
-        existing.push(row);
-        rowsByName.set(row.name, existing);
-      }
-
-      return rowsByName;
     }
 
     function compareDetailRows(left: { name: string; movement: string }, right: { name: string; movement: string }): number {
